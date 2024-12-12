@@ -1,91 +1,81 @@
 package me.skinnynoonie.astar;
 
+import me.skinnynoonie.astar.close.ClosedPositionsCollection;
 import me.skinnynoonie.astar.distance.DistanceCalculator;
+import me.skinnynoonie.astar.open.OpenNodesQueue;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.function.Supplier;
 
 public final class DefaultPathfinder<P extends Position> implements Pathfinder<P> {
     private final MovementController<P> movementController;
     private final DistanceCalculator<P> distanceCalculator;
+    private final Supplier<OpenNodesQueue<P>> openNodesQueueFactory;
+    private final Supplier<ClosedPositionsCollection<P>> closedPositionsCollectionFactory;
 
     public DefaultPathfinder(
         MovementController<P> movementController,
-        DistanceCalculator<P> distanceCalculator
+        DistanceCalculator<P> distanceCalculator,
+        Supplier<OpenNodesQueue<P>> openNodesQueueFactory,
+        Supplier<ClosedPositionsCollection<P>> closedPositionsCollectionFactory
     ) {
         this.movementController = movementController;
         this.distanceCalculator = distanceCalculator;
+        this.openNodesQueueFactory = openNodesQueueFactory;
+        this.closedPositionsCollectionFactory = closedPositionsCollectionFactory;
     }
 
     @Override
     public List<? extends P> findPath(P startPos, P endPos) throws RuntimeException {
-        Map<P, Node<P>> openNodes = new HashMap<>();
-        Set<P> closedPositions = new HashSet<>();
+        OpenNodesQueue<P> openNodesQueue = this.openNodesQueueFactory.get();
+        ClosedPositionsCollection<P> closedPositionsCollection = this.closedPositionsCollectionFactory.get();
 
-        openNodes.put(startPos, new Node<>(startPos, null, 0.0, 0.0));
+        openNodesQueue.add(new Node<>(startPos, null, 0.0, 0.0));
 
-        while (!openNodes.isEmpty()) {
-            Node<P> currentNode = this.getNodeWithLowestFCost(openNodes);
+        while (openNodesQueue.hasNodes()) {
+            Node<P> currentNode = openNodesQueue.getAndRemoveFirst();
             P currentPos = currentNode.getPosition();
 
             if (currentPos.equals(endPos)) {
                 return this.getPathFromStartToEnd(currentNode);
             }
 
-            openNodes.remove(currentPos);
-            closedPositions.add(currentPos);
+            closedPositionsCollection.add(currentPos);
 
             for (P neighbourPos : this.movementController.getTraversableNeighbours(currentPos)) {
-                if (closedPositions.contains(neighbourPos)) {
+                if (closedPositionsCollection.contains(neighbourPos)) {
                     continue;
                 }
 
                 double neighbourGCost = currentNode.getGCost() +
                         this.distanceCalculator.calculate(currentPos, neighbourPos);
 
-                Node<P> neighbourNode = openNodes.get(neighbourPos);
+                Node<P> neighbourNode = openNodesQueue.get(neighbourPos);
                 if (neighbourNode != null) {
                     if (neighbourGCost < neighbourNode.getGCost()) {
                         neighbourNode.setParent(currentNode);
                         neighbourNode.setGCost(neighbourGCost);
+                        openNodesQueue.update(neighbourNode);
                     }
                     continue;
                 }
 
                 double neighbourHCost = this.distanceCalculator.calculate(neighbourPos, endPos);
-                openNodes.put(neighbourPos, new Node<>(neighbourPos, currentNode, neighbourGCost, neighbourHCost));
+                openNodesQueue.add(new Node<>(neighbourPos, currentNode, neighbourGCost, neighbourHCost));
             }
         }
 
         throw new PathNotFoundException();
     }
 
-    private Node<P> getNodeWithLowestFCost(Map<P, Node<P>> openNodes) {
-        Iterator<Node<P>> openNodesIterator = openNodes.values().iterator();
-        Node<P> currentNode = openNodesIterator.next();
-        while(openNodesIterator.hasNext()) {
-            Node<P> openNode = openNodesIterator.next();
-            if (openNode.getFCost() < currentNode.getFCost()) {
-                currentNode = openNode;
-            }
-        }
-        return currentNode;
-    }
-
     private List<P> getPathFromStartToEnd(Node<P> endNode) {
-        List<P> endToStartPath = new ArrayList<>();
+        LinkedList<P> startToEndPath = new LinkedList<>();
         Node<P> childNode = endNode;
         while (childNode != null) {
-            endToStartPath.add(childNode.getPosition());
+            startToEndPath.addFirst(childNode.getPosition());
             childNode = childNode.getParent();
         }
-        Collections.reverse(endToStartPath);
-        return endToStartPath;
+        return startToEndPath;
     }
 }

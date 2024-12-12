@@ -1,20 +1,32 @@
 package me.skinnynoonie.astar;
 
+import me.skinnynoonie.astar.close.HashSetClosedPositionsCollection;
 import me.skinnynoonie.astar.distance.EuclideanDistanceCalculator;
+import me.skinnynoonie.astar.open.HashMapOpenNodesQueue;
 import me.skinnynoonie.astar.position.Position2D;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Example {
     public static void main(String[] args) {
         int[][] map = {
-                {1, 1, 1, 1, 1, 1, 1, 3},
-                {1, 0, 0, 2, 1, 0, 1, 0},
-                {1, 0, 1, 1, 1, 0, 1, 0},
-                {1, 0, 0, 0, 1, 0, 1, 0},
-                {1, 0, 0, 0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 1, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                {1, 2, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1},
+                {1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1},
+                {1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1},
+                {1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1},
+                {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1},
+                {1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1},
+                {1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1},
+                {1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1},
+                {1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 3},
+                {1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1},
+                {1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1},
+                {1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}
         };
 
         DefaultPathfinder<Position2D> defaultPathfinder = new DefaultPathfinder<>(
@@ -37,10 +49,35 @@ public class Example {
                     }
                     return traversableNeighbours;
                 },
-                EuclideanDistanceCalculator.TWO_DIMENSION
+                EuclideanDistanceCalculator.TWO_DIMENSION,
+                HashMapOpenNodesQueue::new,
+                HashSetClosedPositionsCollection::new
         );
 
-        defaultPathfinder.findPath(new Position2D(1, 3), new Position2D(0, 7))
-                .forEach(System.out::println);
+        int startX = 0;
+        int startY = 0;
+        int endX = 0;
+        int endY = 0;
+        for (int x = 0; x < map.length; x++) {
+            for (int y = 0; y < map[0].length; y++) {
+                if (map[x][y] == 2) {
+                    startX = x;
+                    startY = y;
+                } else if (map[x][y] == 3) {
+                    endX = x;
+                    endY = y;
+                }
+            }
+        }
+
+        long start = System.currentTimeMillis();
+        List<? extends Position2D> path =
+                defaultPathfinder.findPath(new Position2D(startX, startY), new Position2D(endX, endY));
+        System.out.println(System.currentTimeMillis() - start);
+
+        path.forEach(position -> map[(int) position.getX()][(int) position.getY()] = 9);
+        Stream.of(map).forEach(
+                sublist -> System.out.println(Arrays.toString(sublist))
+        );
     }
 }
