@@ -1,7 +1,5 @@
 package me.skinnynoonie.astar.position;
 
-import me.skinnynoonie.astar.Position;
-
 public final class Position2D implements Position {
     private final double x;
     private final double y;

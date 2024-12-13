@@ -1,6 +1,6 @@
 package me.skinnynoonie.astar.distance;
 
-import me.skinnynoonie.astar.Position;
+import me.skinnynoonie.astar.position.Position;
 
 /**
  * Calculates the distance between two positions.

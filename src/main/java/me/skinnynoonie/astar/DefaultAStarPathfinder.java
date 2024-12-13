@@ -2,19 +2,21 @@ package me.skinnynoonie.astar;
 
 import me.skinnynoonie.astar.close.ClosedPositionsCollection;
 import me.skinnynoonie.astar.distance.DistanceCalculator;
+import me.skinnynoonie.astar.movement.MovementController;
 import me.skinnynoonie.astar.open.OpenNodesQueue;
+import me.skinnynoonie.astar.position.Position;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public final class DefaultPathfinder<P extends Position> implements Pathfinder<P> {
+public final class DefaultAStarPathfinder<P extends Position> implements AStarPathfinder<P> {
     private final MovementController<P> movementController;
     private final DistanceCalculator<P> distanceCalculator;
     private final Supplier<OpenNodesQueue<P>> openNodesQueueFactory;
     private final Supplier<ClosedPositionsCollection<P>> closedPositionsCollectionFactory;
 
-    public DefaultPathfinder(
+    public DefaultAStarPathfinder(
         MovementController<P> movementController,
         DistanceCalculator<P> distanceCalculator,
         Supplier<OpenNodesQueue<P>> openNodesQueueFactory,

@@ -1,5 +1,7 @@
 package me.skinnynoonie.astar;
 
+import me.skinnynoonie.astar.position.Position;
+
 import java.util.List;
 
 /**
@@ -8,7 +10,7 @@ import java.util.List;
  *
  * @param <P> The position type.
  */
-public interface Pathfinder<P extends Position> {
+public interface AStarPathfinder<P extends Position> {
     /**
      * Finds a path between two destinations.
      * The returned path may vary depending on the implementation.

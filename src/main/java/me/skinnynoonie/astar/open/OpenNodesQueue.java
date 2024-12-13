@@ -1,7 +1,7 @@
 package me.skinnynoonie.astar.open;
 
 import me.skinnynoonie.astar.Node;
-import me.skinnynoonie.astar.Position;
+import me.skinnynoonie.astar.position.Position;
 
 /**
  * A queue for open nodes.

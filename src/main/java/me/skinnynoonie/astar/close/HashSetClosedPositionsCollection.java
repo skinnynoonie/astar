@@ -1,6 +1,6 @@
 package me.skinnynoonie.astar.close;
 
-import me.skinnynoonie.astar.Position;
+import me.skinnynoonie.astar.position.Position;
 
 import java.util.HashSet;
 

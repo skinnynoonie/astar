@@ -1,6 +1,6 @@
 package me.skinnynoonie.astar.close;
 
-import me.skinnynoonie.astar.Position;
+import me.skinnynoonie.astar.position.Position;
 
 /**
  * A collection for the closed nodes (positions are used because the entire node is not needed).

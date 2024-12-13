@@ -1,4 +1,4 @@
-package me.skinnynoonie.astar;
+package me.skinnynoonie.astar.position;
 
 /**
  * An immutable position.

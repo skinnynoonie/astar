@@ -1,4 +1,6 @@
-package me.skinnynoonie.astar;
+package me.skinnynoonie.astar.movement;
+
+import me.skinnynoonie.astar.position.Position;
 
 import java.util.List;
 

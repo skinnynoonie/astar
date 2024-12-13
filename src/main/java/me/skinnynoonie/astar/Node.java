@@ -1,16 +1,21 @@
 package me.skinnynoonie.astar;
 
+import me.skinnynoonie.astar.position.Position;
+
 public final class Node<P extends Position> {
     private final P position;
     private Node<P> parent;
     private double gCost;
     private double hCost;
 
+    private int queueIndex;
+
     public Node(P position, Node<P> parent, double gCost, double hCost) {
         this.position = position;
         this.parent = parent;
         this.gCost = gCost;
         this.hCost = hCost;
+        this.queueIndex = -1;
     }
 
     public P getPosition() {
@@ -43,5 +48,13 @@ public final class Node<P extends Position> {
 
     public double getFCost() {
         return this.gCost + this.hCost;
+    }
+
+    public int getQueueIndex() {
+        return this.queueIndex;
+    }
+
+    public void setQueueIndex(int queueIndex) {
+        this.queueIndex = queueIndex;
     }
 }
