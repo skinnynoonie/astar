@@ -26,7 +26,7 @@ public final class HashMapOpenNodesQueue<P extends Position> implements OpenNode
     public Node<P> getAndRemoveFirst() {
         Iterator<Node<P>> openNodesIterator = this.openNodes.values().iterator();
         Node<P> currentNode = openNodesIterator.next();
-        while(openNodesIterator.hasNext()) {
+        while (openNodesIterator.hasNext()) {
             Node<P> openNode = openNodesIterator.next();
             if (openNode.getFCost() < currentNode.getFCost()) {
                 currentNode = openNode;
