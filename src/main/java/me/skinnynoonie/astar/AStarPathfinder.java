@@ -12,10 +12,9 @@ import java.util.List;
  */
 public interface AStarPathfinder<P extends Position> {
     /**
-     * Finds a path between two destinations.
+     * Finds a path between two positions.
      * The returned path may vary depending on the implementation.
-     * An optimal path, suboptimal path, etc. are not guaranteed, but "a" path is.
-     * If a path cannot be found, a {@link PathNotFoundException} is thrown.
+     * An optimal path, suboptimal path, etc. are not guaranteed (depends on the implementation), but "a" path is.
      *
      * @param start The starting position.
      * @param end The ending/destination position.
